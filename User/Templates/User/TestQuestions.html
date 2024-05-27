@@ -1,0 +1,100 @@
+{% extends 'User/Include.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="timer">Online Test</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        .green {
+            background-color: green;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <form method="POST">
+            {% csrf_token %}
+            {% for question in Questions %}
+            <div class="col-md-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Question {{ forloop.counter }}</h5>
+                        <p class="card-text">{{ question.question_id.question_content }}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item  
+                            {% if question.question_id.answer == question.test_question_answer and question.question_id.answer == question.question_id.option_1 %}
+                                green
+                            {% elif question.question_id.option_1 == question.test_question_answer %}
+                                red
+                            {% elif question.question_id.option_1 == question.question_id.answer %}
+                                blue
+                            {% endif %}
+                            ">{{ question.question_id.option_1 }}</li>
+                            <li class="list-group-item 
+                            {% if question.question_id.answer == question.test_question_answer and question.question_id.answer == question.question_id.option_2 %}
+                                green
+                            {% elif question.question_id.option_2 == question.test_question_answer %}
+                                red
+                            {% elif question.question_id.option_2 == question.question_id.answer %}
+                                blue
+                            {% endif %}
+                            ">{{ question.question_id.option_2 }} </li>
+                            <li class="list-group-item 
+                            {% if question.question_id.answer == question.test_question_answer and question.question_id.answer == question.question_id.option_3 %}
+                                green
+                            {% elif question.question_id.option_3 == question.test_question_answer %}
+                                red
+                            {% elif question.question_id.option_3 == question.question_id.answer %}
+                                blue
+                            {% endif %}
+                            ">{{ question.question_id.option_3 }} </li>
+                            <li class="list-group-item 
+                            {% if question.question_id.answer == question.test_question_answer and question.question_id.answer == question.question_id.option_4 %}
+                                green
+                            {% elif question.question_id.option_4 == question.test_question_answer %}
+                                red
+                            {% elif question.question_id.option_4 == question.question_id.answer %}
+                                blue
+                            {% endif %}
+                            ">{{ question.question_id.option_4 }} </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </form>
+
+    </div>
+    <script>
+        window.addEventListener('beforeunload', function(e) {
+            // Cancel the event
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+        });
+    </script>
+    
+    
+</body>
+
+</html>
+
+{% endblock %}

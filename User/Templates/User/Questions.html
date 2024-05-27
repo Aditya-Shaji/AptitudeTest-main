@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Test</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .timer {
+      z-index: 99;
+      width: 140px;
+      text-align: center;
+      position: fixed;
+      top: 10%;
+      left: 88%;
+    }
+  </style>
+
+
+  <script>
+    window.addEventListener('beforeunload', function (e) {
+  var confirmationMessage = 'Are you sure you want to refresh? Your changes may not be saved.';
+  e.returnValue = confirmationMessage; // For older browsers
+  return confirmationMessage;
+});
+
+    function changeSession() {
+      sessionStorage.clear()
+    }
+
+    window.addEventListener('pageshow', 
+    function() {
+      const currentTime = new Date().getTime();
+      let thirtyMinutesLater;
+
+      if (!sessionStorage.getItem('time')) {
+        thirtyMinutesLater = new Date(currentTime + 30 * 60 * 1000).getTime();
+        sessionStorage.setItem('time', thirtyMinutesLater);
+      } else {
+        thirtyMinutesLater = parseInt(sessionStorage.getItem('time'));
+      }
+
+      updateCountdown(thirtyMinutesLater);
+      const timer = setInterval(() => updateCountdown(thirtyMinutesLater), 1000);
+    }
+
+    )
+
+    function updateCountdown(thirtyMinutesLater) {
+      const now = new Date().getTime();
+   
+      const distance = thirtyMinutesLater - now;
+
+      if (distance <= 0) {
+        clearInterval(timer);
+        sessionStorage.clear()
+        window.location = "{% url 'user:HomePage' %}"
+       }
+
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('timer').innerHTML = `Countdown: ${minutes}m ${seconds}s`;
+    }
+
+    
+    window.onbeforeunload = function() {
+      alert("no");
+  return "Are you sure you want to leave?";
+}
+    
+
+
+
+    
+
+
+  </script>
+</head>
+
+<body>
+  <div class="card shadow-sm timer">
+    <div class="card-body">
+      <div class="card-title" id="timer"></div>
+    </div>
+  </div>
+  <div class="container">
+    <form method="POST">
+      {% csrf_token %} {% for question in Questions %}
+      <div class="col-md-12 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Question {{ forloop.counter }}</h5>
+            <p class="card-text">{{ question.question_content }}</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <input type="radio" required name="answer_{{ question.question_id }}" value="{{ question.option_1 }}" />
+                {{ question.option_1 }}
+              </li>
+              <li class="list-group-item">
+                <input type="radio" name="answer_{{ question.question_id }}" value="{{ question.option_2 }}" />
+                {{ question.option_2 }}
+              </li>
+              <li class="list-group-item">
+                <input type="radio" name="answer_{{ question.question_id }}" value="{{ question.option_3 }}" />
+                {{ question.option_3 }}
+              </li>
+              <li class="list-group-item">
+                <input type="radio" name="answer_{{ question.question_id }}" value="{{ question.option_4 }}" />
+                {{ question.option_4 }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="question_ids" value="{{ question.question_id }}" />
+      {% endfor %}
+      <div class="col-md-12 mb-4">
+        <input onclick="changeSession()" type="submit" class="btn btn-primary" value="Submit" />
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>
